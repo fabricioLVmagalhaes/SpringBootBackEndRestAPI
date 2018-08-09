@@ -1,6 +1,8 @@
 package com.fabriciomagalhaes.cursomc.resources;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fabriciomagalhaes.cursomc.domain.Categoria;
+import com.fabriciomagalhaes.cursomc.dto.CategoriaDTO;
 import com.fabriciomagalhaes.cursomc.services.CategoriaService;
 
 @RestController
@@ -49,10 +52,22 @@ public class CategoriaResource {
 		
 	}
 	
+	//endpoint para deletar categoria || DELETE category endpoint
 	@DeleteMapping(value="/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
 		service.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+	
+	//endpoint para busca de lista de categorias || All categories' endpoint
+	@GetMapping
+	public ResponseEntity<List<CategoriaDTO>> findAll() {
+		
+		List<Categoria> list = service.findAll();
+		//metodo para converção da List<Categoria> para List<CategoriaDTO> || List<Categoria> to List<CategoiraDTO> conversion method
+		List<CategoriaDTO> listDTO = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());
+		
+		return ResponseEntity.ok().body(listDTO);
 	}
 
 }
