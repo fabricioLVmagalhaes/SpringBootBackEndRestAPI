@@ -27,66 +27,67 @@ import com.fabriciomagalhaes.cursomc.services.CategoriaService;
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaResource {
-	
+
 	@Autowired
 	private CategoriaService service;
-	
-	@GetMapping(value="/{id}")
+
+	@GetMapping(value = "/{id}")
 	public ResponseEntity<Categoria> find(@PathVariable Integer id) {
-		
+
 		Categoria obj = service.find(id);
-		
+
 		return ResponseEntity.ok().body(obj);
 	}
-	
+
 	@PostMapping
 	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDTO) {
 		Categoria obj = service.fromDTO(objDTO);
 		obj = service.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/{id}").buildAndExpand(obj.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
-	
-	@PutMapping(value="/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDTO, @PathVariable Integer id){
+
+	@PutMapping(value = "/{id}")
+	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDTO, @PathVariable Integer id) {
 		Categoria obj = service.fromDTO(objDTO);
 		obj.setId(id);
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
-		
+
 	}
-	
-	//endpoint para deletar categoria || DELETE category endpoint
-	@DeleteMapping(value="/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Integer id){
+
+	// endpoint para deletar categoria || DELETE category endpoint
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		service.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-	
-	//endpoint para busca de lista de categorias || All categories' endpoint
+
+	// endpoint para busca de lista de categorias || All categories' endpoint
 	@GetMapping
 	public ResponseEntity<List<CategoriaDTO>> findAll() {
-		
+
 		List<Categoria> list = service.findAll();
-		//metodo para converção da List<Categoria> para List<CategoriaDTO> || List<Categoria> to List<CategoiraDTO> conversion method
+		// metodo para converção da List<Categoria> para List<CategoriaDTO> ||
+		// List<Categoria> to List<CategoiraDTO> conversion method
 		List<CategoriaDTO> listDTO = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());
-		
+
 		return ResponseEntity.ok().body(listDTO);
 	}
-	
-	//endpoint para busca de lista de categorias || All categories' endpoint
-		@GetMapping(value="/page")
-		public ResponseEntity<Page<CategoriaDTO>> findPage(@RequestParam(value="page", defaultValue="0") Integer page, 
-				                                           @RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 
-				                                           @RequestParam(value="borderBy", defaultValue="nome") String orderBy, 
-				                                           @RequestParam(value="direction", defaultValue="ASC") String direction) {
-			
-			Page<Categoria> list = service.findPage(page, linesPerPage, orderBy, direction);
-			//metodo para converção da Page<Categoria> para List<CategoriaDTO> ||Page<Categoria> to List<CategoiraDTO> conversion method
-			Page<CategoriaDTO> listDTO = list.map(obj -> new CategoriaDTO(obj));
-			
-			return ResponseEntity.ok().body(listDTO);
-		}
+
+	// endpoint para busca de lista de categorias || All categories' endpoint
+	@GetMapping(value = "/page")
+	public ResponseEntity<Page<CategoriaDTO>> findPage(@RequestParam(value = "page", defaultValue = "0") Integer page,
+			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
+			@RequestParam(value = "borderBy", defaultValue = "nome") String orderBy,
+			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
+
+		Page<Categoria> list = service.findPage(page, linesPerPage, orderBy, direction);
+		// metodo para converção da Page<Categoria> para List<CategoriaDTO>
+		// ||Page<Categoria> to List<CategoiraDTO> conversion method
+		Page<CategoriaDTO> listDTO = list.map(obj -> new CategoriaDTO(obj));
+
+		return ResponseEntity.ok().body(listDTO);
+	}
 
 }
