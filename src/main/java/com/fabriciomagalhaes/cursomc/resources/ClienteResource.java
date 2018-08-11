@@ -1,5 +1,6 @@
 package com.fabriciomagalhaes.cursomc.resources;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,14 +12,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fabriciomagalhaes.cursomc.domain.Cliente;
 import com.fabriciomagalhaes.cursomc.dto.ClienteDTO;
+import com.fabriciomagalhaes.cursomc.dto.ClienteNewDTO;
 import com.fabriciomagalhaes.cursomc.services.ClienteService;
 
 @RestController
@@ -78,5 +82,14 @@ public class ClienteResource {
 
 		return ResponseEntity.ok().body(listDTO);
 	}
+	
+	@PostMapping
+	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO objDTO) {
+		Cliente obj = service.fromDTO(objDTO);
+		obj = service.insert(obj);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		return ResponseEntity.created(uri).build();
+	}
+
 
 }
