@@ -71,7 +71,7 @@ public class PedidoService {
 		}
 		//salvando os itens do pedido no BD
 		itemPedidoRepository.saveAll(obj.getItens());
-		emailService.sendOrderConfirmationEmail(obj);
+		emailService.sendOrderConfirmationHtmlEmail(obj);
 		return obj;
 	}
 
