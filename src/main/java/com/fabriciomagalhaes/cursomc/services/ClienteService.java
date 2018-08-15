@@ -3,7 +3,6 @@ package com.fabriciomagalhaes.cursomc.services;
 import java.util.List;
 import java.util.Optional;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -97,6 +96,20 @@ public class ClienteService {
 
 	public Cliente fromDTO(ClienteDTO objDTO) {
 		return new Cliente(objDTO.getId(), objDTO.getNome(), objDTO.getEmail(), null, null, null);
+	}
+	
+	public Cliente findByEmail(String email) {
+		UserSS user = UserService.authenticated();
+		if(user==null || !user.hasRole(Perfil.ADMIN) && !email.equals(user.getUsername())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
+		Cliente obj = repo.findByEmail(email);
+		if (obj == null) {
+			throw new AuthorizationException("Objeto não encotrado! Id: " + user.getId() + ", Tipo: " + Cliente.class.getName());
+		}
+		
+		return obj;
 	}
 	
 	
